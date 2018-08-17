@@ -2,4 +2,16 @@ extends layout
 
 block content
   h1= title
-  p Welcome to #{title}
+  p To start your next carting journey, enter a product name and size.  This should only be done right before the sale begins.
+  form(method="POST" action="/cart")
+    div.form-group
+      label(for="website") Web Site:
+      input#product(type="text", value="https://welldressedwolf.com", name="website")
+    div.form-group
+      label(for="product") Product:
+      input#product(type="text", value="Aunt Heart Yellow Gingham", name="product")
+    div.form-group
+      label(for="size") Size:
+      input#product(type="text", value="2t", name="size")
+    div.form-group
+    button.btn.btn-primary(type="submit") Go!

@@ -6,3 +6,16 @@ body {
 a {
   color: #00B7FF;
 }
+
+label {
+  width: 80px;
+  padding: 5px;
+  display: inline-block;
+  font-size: 1.2em;
+}
+
+input[type=text] {
+  padding: 2px;
+  width: 300px;
+  font-size: 1.2em;
+}

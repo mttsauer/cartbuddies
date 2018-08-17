@@ -1,0 +1,10 @@
+extends layout
+
+block content
+  script(src="/javascripts/cart.js")
+  h1= title
+  p Good luck getting #{product} in #{size} from #{site}!.  
+  p
+    br
+    d#message Grabbing your information now
+    d#count
