@@ -6,8 +6,8 @@ router.get('/', function(req, res, next) {
   res.render('index', { title: 'Start a Cart', website: req.param('website'), product: req.param('product'), size: req.param('size') });
 });
 
-router.get('/x:command', function(req, res, next) {
-  res.render('index', { title: 'Start a Cart', command: req.params.command });
+router.get('/id-:uuid', function(req, res, next) {
+  res.render('index', { title: 'Start a Cart', uuid: req.params.uuid });
 });
 
 module.exports = router;

@@ -1,28 +1,14 @@
 var i = 0;
 
-submit = function(){
+checkStatus = function(uuid){
     $.ajax({
-        url: "/cart",
-        method: "POST",
-        formdata: $('form')[0],
-        success: function(result, textStatus){
-            checkStatus();
-        },
-        error: function(result, textStatus){
-            console.log(textStatus);
-        }
-    });
-}
-
-checkStatus = function(){
-    $.ajax({
-        url: "/cart", 
+        url: "/cart/id-" + uuid, 
         success: function(result, textStatus){
             if(result) {
                 if(result.redirect) window.location.replace(result.redirect);
                 $("#message").html(result.message);
                 if(result.delay > 0) {
-                    setTimeout(checkStatus, result.delay);
+                    setTimeout(function(){checkStatus(uuid)}, result.delay);
                     $("#count").html(''+ i++ + ':' + result.count);
                 }
             }
@@ -34,5 +20,7 @@ checkStatus = function(){
 }
 
 $( document ).ready(function() {
-    if( $('#command')[0].value === 'checkStatus' ) checkStatus();
+    
+    if( $('#uuid')[0].value ) 
+    checkStatus($('#uuid')[0].value);
 });
