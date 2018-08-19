@@ -8,7 +8,7 @@ var router = express.Router();
 router.get('/collections/all/products/:id.json', function(req, res, next) {
 
   var productResponse = {product : { variants : [{id: 1, title: '18m'}, {id: 2, title: '24m'}, {id: 3, title: '2t'} ]}};
-  var success = Math.random() > .95;
+  var success = Math.random() > .75;
 
   console.log('Sending: ' + success);
   res.status(success ? 200 : 404);
