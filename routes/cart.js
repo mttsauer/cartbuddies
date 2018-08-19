@@ -1,32 +1,34 @@
 var express = require('express');
 const superagent = require('superagent');
+var logger = require('morgan');
 var jsonQuery = require('json-query');
 
 const retryDelay = 200;
 
 var router = express.Router();
 
-fauxSession = {};
+globalData = {};
 
-/* GET home page. */
+/* POST and new product request */
 router.post('/', function(req, res, next) {
-  fauxSession[req.session.id] = {};
 
-  //Add some cleaning logic
+  var sessionId = req.session.id;
+  globalData[sessionId] = {};
+
+  //TODO: Add some cleaning logic
+  //TODO: find reasonable logger
   var url = req.body.website + '/collections/all/products/' + req.body.product.split(' ').join('-').toLowerCase() + '.json';
-  console.log(url);
 
-  fauxSession[req.session.id].response = { delay: retryDelay, message: 'Checking inventory...' }
-  requestForProduct(url, req);  
+  globalData[sessionId].response = { delay: retryDelay, message: 'Checking inventory...' }
+  requestForProduct(url, sessionId, req.body.size);  
   
-  fauxSession[req.session.id].website = req.body.website;
-  console.log("returning response");
-  res.render('cart', { title: 'Cart', product: req.body.product, size: req.body.size, site: req.body.website });
+  globalData[sessionId].website = req.body.website;
+  res.redirect('/xcheckStatus');
 });
 
 router.get('/', function(req, res, next) {
 
-  var session = fauxSession[req.session.id];
+  var session = globalData[req.session.id];
 
   if(!session)
     res.redirect('/');
@@ -34,25 +36,25 @@ router.get('/', function(req, res, next) {
   res.send(session.response);
 });
 
-requestForProduct = function(url, req){
-
+requestForProduct = function(url, sessionId, variantTitle, i){
+  i=i?i:0;
+  console.log('requestForProduct:' + i);
   superagent.get(url).end((err, response) => {
-    if (err) { return console.log(err); }
-    if(response.status != 200) { 
-      fauxSession[req.session.id].response = { delay: retryDelay, message: 'Product not yet available' }
-      console.log('Making another call');
-      requestForProduct(url,req);
+    if (err) { 
+      console.log(err); 
+      globalData[sessionId].response = { delay: retryDelay, message: 'Product not yet available', count: i };
+      setTimeout( function(){requestForProduct(url,sessionId, variantTitle, ++i)}, 1000); //Delay?
       return; 
     }
 
-    variant = jsonQuery('product.variants[title=' + req.body.size + '].id', {data:response.body}).value;
+    variant = jsonQuery('product.variants[title=' + variantTitle + '].id', {data:response.body}).value;
     
     if(!variant) {
-      fauxSession[req.session.id].response = { delay: 0, message: 'Product found, but that size isn\'t available' }
+      globalData[sessionId].response = { delay: 0, message: 'Product found, but that size isn\'t available', count: 1 }
       return;
     }
 
-    fauxSession[req.session.id].response = { redirect: fauxSession[req.session.id].website + '/cart/' + variant + ':1' }
+    globalData[sessionId].response = { redirect: globalData[sessionId].website + '/cart/' + variant + ':1' }
   });
 }
 

@@ -8,7 +8,7 @@ const uuidv4 = require('uuid/v4');
 
 var indexRouter = require('./routes/index');
 var cartRouter = require('./routes/cart');
-var usersRouter = require('./routes/users');
+var mockRouter = require('./routes/mock');
 
 var app = express();
 
@@ -30,7 +30,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/cart', cartRouter);
-app.use('/users', usersRouter);
+app.use('/mock', mockRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

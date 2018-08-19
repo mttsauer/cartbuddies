@@ -6,7 +6,7 @@ block content
   form(method="POST" action="/cart")
     div.form-group
       label(for="website") Web Site:
-      input#product(type="text", value="https://welldressedwolf.com", name="website")
+      input#product(type="text", value="http://localhost:3000/mock", name="website")
     div.form-group
       label(for="product") Product:
       input#product(type="text", value="Aunt Heart Yellow Gingham", name="product")
@@ -14,4 +14,10 @@ block content
       label(for="size") Size:
       input#product(type="text", value="2t", name="size")
     div.form-group
+    input#command(type="hidden", name="command" value=command) 
     button.btn.btn-primary(type="submit") Go!
+  script(src="/javascripts/index.js")
+  p
+    br
+    d#message &nbsp;&nbsp;
+    d#count
