@@ -8,7 +8,7 @@ var router = express.Router();
 router.get('/collections/all/products/:id.json', function(req, res, next) {
 
   var productResponse = {product : { variants : [{id: 1, title: '18m'}, {id: 2, title: '24m'}, {id: 3, title: '2t'} ]}};
-  var success = Math.random() > .75;
+  var success = Math.random() > .85;
 
   console.log('Sending: ' + success);
   res.status(success ? 200 : 404);
@@ -16,7 +16,7 @@ router.get('/collections/all/products/:id.json', function(req, res, next) {
 });
 
 router.get('/cart/:id::qty', function(req, res, next) {
-  res.send("You now have " + req.params.qty + " of product id " + req.params.id + " in your cart" );
+  res.send("You now have " + req.params.qty + " of product id " + req.params.id + " in your cart.  If this was a real site, you would be looking at the cart at that site right now.  Checkout quickly!" );
 });
 
 

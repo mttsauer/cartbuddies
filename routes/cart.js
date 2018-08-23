@@ -4,7 +4,8 @@ var logger = require('morgan');
 var jsonQuery = require('json-query');
 const uuidv4 = require('uuid/v4');
 
-const retryDelay = 200;
+const retryDelay = 200; //client
+const retryCount = 60; //server ( 1 min )
 
 var router = express.Router();
 
@@ -14,6 +15,29 @@ globalData = {};
 /* POST and new product request */
 router.post('/', function(req, res, next) {
 
+  if(req.param("action") == "go")
+    go(req,res);
+  else if(req.param("action") == "test") {
+    req.body.website = req.protocol + "://" + req.headers.host +  "/mock";
+    go(req,res);
+  }
+  else {
+    
+    res.redirect('/?website=' + req.body.website + '&product=' + req.body.product + '&size=' + req.body.size );
+  }
+});
+
+router.get('/id-:uuid', function(req, res, next) {
+
+  var data = globalData[req.params.uuid];
+
+  if(!data)
+    res.redirect('/');
+
+  res.send(data.response);
+});
+
+go = function(req, res){
   var uuid = uuidv4();
   
   globalData[uuid] = {};
@@ -27,17 +51,7 @@ router.post('/', function(req, res, next) {
   
   globalData[uuid].website = req.body.website;
   res.redirect('/id-' + uuid);
-});
-
-router.get('/id-:uuid', function(req, res, next) {
-
-  var data = globalData[req.params.uuid];
-
-  if(!data)
-    res.redirect('/');
-
-  res.send(data.response);
-});
+}
 
 requestForProduct = function(url, uuid, variantTitle, i){
   i=i?i:0;
@@ -46,7 +60,8 @@ requestForProduct = function(url, uuid, variantTitle, i){
     if (err) { 
       console.log(err); 
       globalData[uuid].response = { delay: retryDelay, message: 'Product not yet available', count: i };
-      setTimeout( function(){requestForProduct(url,uuid, variantTitle, ++i)}, 1000); //Delay?
+      if(i < retryCount)
+        setTimeout( function(){requestForProduct(url,uuid, variantTitle, ++i)}, 1000); //Delay?
       return; 
     }
 
