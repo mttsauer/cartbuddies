@@ -1,21 +1,5 @@
 var i = 0;
 
-// $(document).ready(
-//     function () {   
-//         $('#form').submit(   
-//             function(event) {
-//                 setToPlaceholder($('input#website')[0]);
-//                 setToPlaceholder($('input#product')[0]);
-//                 setToPlaceholder($('input#size'))[0];
-//             }
-//         );
-//     }
-// ); 
-
-// setToPlaceholder = function(input) {
-//     input.value = input.placeholder;
-// }
-
 checkStatus = function(uuid){
     $.ajax({
         url: "/cart/id-" + uuid, 
