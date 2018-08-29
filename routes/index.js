@@ -7,7 +7,7 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/id-:uuid', function(req, res, next) {
-  res.render('index', { title: 'Start a Cart', uuid: req.params.uuid });
+  res.render('index', { title: 'Start a Cart', uuid: req.params.uuid, website: req.param('website'), product: req.param('product'), size: req.param('size') });
 });
 
 module.exports = router;

@@ -4,7 +4,8 @@
   },
   "env": {
     "retryDelay": "200",
-    "retryCount": "60"
+    "retryCount": "60",
+    "ENV.NAME": "DEV"
   },
   "formation": {
     "web": {
