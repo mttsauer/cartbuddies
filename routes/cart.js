@@ -13,8 +13,8 @@ const logger = winston.createLogger({
     transports: [new winston.transports.Console()]
   });
 
-const retryDelay = 200; //client
-const retryCount = 60; //server ( 1 min )
+const retryDelay = 500; //client
+const retryCount = 300; //server ( 5 min )
 const serverDelay = 1000; //server 1 sec
 const similarityThreshold = .85;  //
 
@@ -69,9 +69,16 @@ go = function(req, res){
   var uuid = uuidv4();
   
   globalData[uuid] = {};
+  globalData[uuid].errors = 0;
 
   logger.log( 'silly', 'normalizing website', [uuid,req.body.website]);
-  var cleanWebsite = normalizeUrl(req.body.website);
+
+  try{
+    var cleanWebsite = normalizeUrl(req.body.website);
+  }catch(e){
+    logger.log('error', e);
+    res.redirect('/');
+  }
 
   logger.log( 'silly', 'calling requestForSiteProducts', uuid);
   globalData[uuid].response = { delay: retryDelay, message: 'Checking inventory...' }
@@ -88,7 +95,14 @@ requestForSiteProducts = function(website, product, variantTitle, uuid, i){
   superagent.get(website + '/collections/all/products.json').end((err,response) => {
     if(err) {
       logger.log( 'error',  [uuid, err]);
-      globalData[uuid].response = { delay: retryDelay, message: 'Could not find any products on this site.  Stopping Bot', count: i };
+      
+      globalData[uuid].errors++
+      if( globalData[uuid].errors < 5 ){
+        logger.log( 'info', 'retrying request', [uuid, website, product, variantTitle, i]);
+        setTimeout( function(){requestForSiteProducts(website, product, variantTitle, uuid, ++i)}, serverDelay);
+      } else {
+        globalData[uuid].response = { delay: 0, message: 'Could not find any products on this site.  Stopping Bot.  Try again later', count: i };
+      }
       return;
     }
 
@@ -98,7 +112,7 @@ requestForSiteProducts = function(website, product, variantTitle, uuid, i){
 
     if(!products || products.size === 0) {
       logger.log( 'verbose', 'No Products', [uuid]);
-      globalData[uuid].response = { delay: retryDelay, message: 'No matching products found yet. The search continues', count: i };
+      globalData[uuid].response = { delay: retryDelay, message: 'No matching products found yet. The search continues...', count: i };
       if(i < retryCount) {
         logger.log( 'info', 'retrying request', [uuid, website, product, variantTitle, i]);
         setTimeout( function(){requestForSiteProducts(website, product, variantTitle, uuid, ++i)}, serverDelay);

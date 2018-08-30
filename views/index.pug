@@ -2,30 +2,43 @@ extends layout
 
 block content
   h1= title
-  p To start your next carting journey, enter a product name and size.  This should only be done right before the sale begins.
-  div.col-sm-12
+  div.col-12
+    p To start your next carting journey, enter a product name and size.  This should only be done right before the sale begins.  One you hit go, the bot will continuously check the site for the product.  Once it is found you will be redirected to your cart.  If the product isn't found within 5 minutes you should see a message at the bottom indicating to try another product.
+    div#message.col-sm-10.alert
+    div.col-sm-2
+         
+      div#loader.lds-roller
+        div
+        div
+        div
+        div
+        div
+        div
+        div
+        div
+        span#count.count
+  div.clear
+  div.col-12
     form#form(method="POST" action="/cart")
       div.form-group
-        label.col-sm-2(for="website") Web&nbsp;Site:
-        input#website(type="text", placeholder="https://welldressedwolf.com", name="website", value=website)
+        label.col-2.col-form-label(for="website") Web&nbsp;Site:
+        div.col-10.input-group
+          div.input-group-addon https://
+          input#website.form-control.form-control-lg(type="text", placeholder="welldressedwolf.com", name="website", value=website)
       div.form-group
-        label.col-sm-2(for="product") Product:
-        input#product(type="text", placeholder="Aunt Heart Yellow Gingham", name="product", value=product)
+        label.ccol-2.col-form-label(for="product") Product:
+        div.col-10
+          input#product.form-control.form-control-lg(type="text", placeholder="Aunt Heart Yellow Gingham", name="product", value=product)
       div.form-group
-        label.col-sm-2(for="size") Size:
-        input#size(type="text", placeholder="2t", name="size", value=size)
-      div.form-group
-      input#uuid(type="hidden", name="uuid" value=uuid)
-      div.col-sm-2
-        button.btn.btn-primary(type="submit" name="action" value="go") Go!
-      div
-        button#test.btn.btn-secondary(type="submit" name="action" value="test") Run a Test
-        button#test.btn.btn-secondary(type="submit" name="action" value="link") Generate a link
+        label.col-2.col-form-label(for="size") Size:
+        div.col-10
+          input#size.form-control.form-control-lg(type="text", placeholder="2t", name="size", value=size)
+      div.col-12
+        input#uuid(type="hidden", name="uuid" value=uuid)
+        button.btn.btn-primary.form-control.form-control-lg(type="submit" name="action" value="go") Go!
+        br
+        br
+        button#test.btn.btn-secondary.form-control.form-control-lg(type="submit" name="action" value="test") Run a Test
+        button#test.btn.btn-secondary.form-control.form-control-lg(type="submit" name="action" value="link") Generate a link
   script(src="/javascripts/index.js")
-  p
-    br
-    br
-    br
-    d#message 
-    br
-    d#count
+  div.col-12
