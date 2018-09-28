@@ -15,7 +15,7 @@ const logger = winston.createLogger({
 
 const retryDelay = 500; //client
 const retryCount = 300; //server ( 5 min )
-const serverDelay = 1000; //server 1 sec
+const serverDelay = 2000; //server 2 sec
 const similarityThreshold = .85;  //
 
 var router = express.Router();
@@ -99,7 +99,8 @@ requestForSiteProducts = function(website, product, variantTitle, uuid, i){
       globalData[uuid].errors++
       if( globalData[uuid].errors < 5 ){
         logger.log( 'info', 'retrying request', [uuid, website, product, variantTitle, i]);
-        setTimeout( function(){requestForSiteProducts(website, product, variantTitle, uuid, ++i)}, serverDelay);
+        throttled = true; //actually check the response
+        setTimeout( function(){requestForSiteProducts(website, product, variantTitle, uuid, ++i)}, serverDelay * (throttled?10:1));
       } else {
         globalData[uuid].response = { delay: 0, message: 'Could not find any products on this site.  Stopping Bot.  Try again later', count: i };
       }
