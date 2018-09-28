@@ -16,7 +16,7 @@ const logger = winston.createLogger({
 const retryDelay = 500; //client
 const retryCount = 300; //server ( 5 min )
 const serverDelay = 2000; //server 2 sec
-const similarityThreshold = .85;  //
+const similarityThreshold = .75;  //
 
 var router = express.Router();
 
@@ -74,7 +74,7 @@ go = function(req, res){
   logger.log( 'silly', 'normalizing website', [uuid,req.body.website]);
 
   try{
-    var cleanWebsite = normalizeUrl(req.body.website);
+    var cleanWebsite = normalizeUrl(req.body.website, {normalizeHttp: true});
   }catch(e){
     logger.log('error', e);
     res.redirect('/');
@@ -85,7 +85,7 @@ go = function(req, res){
   requestForSiteProducts(cleanWebsite, req.body.product, req.body.size, uuid);  
   
   logger.log( 'silly', 'redirecting to polling page', uuid);
-  res.redirect('/id-' + uuid + '?website='+cleanWebsite+'&product='+req.body.product+'&size='+req.body.size);
+  res.redirect('/id-' + uuid + '?website='+cleanWebsite.substring(8)+'&product='+req.body.product+'&size='+req.body.size);
 }
 
 requestForSiteProducts = function(website, product, variantTitle, uuid, i){
